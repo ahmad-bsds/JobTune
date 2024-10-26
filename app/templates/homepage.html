@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0,255,135,0.05), transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .notification-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #00ff87;
+            color: #000;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+        }
+
+        .settings-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .settings-btn:hover, .notification-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            padding-top: 120px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .user-image {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            position: relative;
+        }
+
+        .user-image::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: inherit;
+            filter: blur(15px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .welcome-text h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #fff, #00ff87);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-text p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h4 {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff87;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .view-applications-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-applications-button:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.05);
+        }
+
+        .resumes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .resume-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+        }
+
+        .resume-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0,255,135,0.3);
+            box-shadow: 0 10px 20px rgba(0,255,135,0.1);
+        }
+
+        .resume-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .last-modified {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .button {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .primary {
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #000;
+        }
+
+        .primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,255,135,0.3);
+        }
+
+        .secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        .secondary:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.05);
+        }
+
+        .create-new {
+            background: rgba(0,255,135,0.05);
+            border: 2px dashed rgba(0,255,135,0.2);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 200px;
+        }
+
+        .create-new:hover {
+            background: rgba(0,255,135,0.1);
+            border-color: #00ff87;
+            transform: translateY(-5px);
+        }
+
+        .create-new span {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #00ff87;
+            transition: transform 0.3s;
+        }
+
+        .create-new:hover span {
+            transform: rotate(90deg);
+        }
+
+        .create-new p {
+            color: #00ff87;
+            font-weight: 500;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 1rem;
+        }
+
+        .tag-new {
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #000;
+        }
+
+        .tag-draft {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .container {
+                padding: 1rem;
+                padding-top: 100px;
+            }
+
+            .welcome-text h1 {
+                font-size: 2rem;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <nav>
+        <div class="logo">
+            <span class="logo-icon">📄</span>
+            JobEase
+        </div>
+        <div class="nav-actions">
+            <button class="notification-btn">
+                🔔
+                <div class="notification-badge">3</div>
+            </button>
+            <button class="settings-btn">⚙️</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <div class="user-image">
+                👤
+            </div>
+            <div class="welcome-text">
+                <h1>Welcome back, Alex!</h1>
+                <p>Your personalized resumes are ready for your next opportunity</p>
+            </div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <h4>Total Applications</h4>
+                <div class="value">24</div>
+            </div>
+            <div class="stat-card">
+                <h4>Interview Invites</h4>
+                <div class="value">8</div>
+            </div>
+            <div class="stat-card">
+                <h4>Resume Views</h4>
+                <div class="value">156</div>
+            </div>
+            <div class="stat-card">
+                <h4>Match Score</h4>
+                <div class="value">92%</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2 class="section-title">Your Resumes</h2>
+            <button class="view-applications-button">
+                📊 View Applications Status
+            </button>
+        </div>
+
+        <div class="resumes-grid">
+            <div class="resume-card">
+                <h3>Senior Full Stack Developer <span class="tag tag-new">New</span></h3>
+                <div class="last-modified">
+                    🕒 Last modified: 2 days ago
+                </div>
+                <div class="card-actions">
+                    <button class="button primary">📥 Download</button>
+                    <button class="button secondary">💡 View Tips</button>
+                    <button class="button secondary">✏️ Modify</button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                <h3>UI/UX Designer <span class="tag tag-draft">Draft</span></h3>
+                <div class="last-modified">
+                    🕒 Last modified: 5 days ago
+                </div>
+                <div class="card-actions">
+                    <button class="button primary">📥 Download</button>
+                    <button class="button secondary">💡 View Tips</button>
+                    <button class="button secondary">✏️ Modify</button>
+                </div>
+            </div>
+
+            <div class="resume-card">
+                <h3>Product Manager</h3>
+                <div class="last-modified">
+                    🕒 Last modified: 1 week ago
+                </div>
+                <div class="card-actions">
+                    <button class="button primary">📥 Download</button>
+                    <button class="button secondary">💡 View Tips</button>
+                    <button class="button secondary">✏️ Modify</button>
+                </div>
+            </div>
+
+            <div class="create-new">
+                <span>➕</span>
+                <p>Create New Resume</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', () => {
+    // Initialize GSAP timeline for smoother animations
+    const tl = gsap.timeline({
+        defaults: {
+            ease: "power3.out"
+        }
+    });
+
+    // Animate stats numbers counting up with improved performance
+    const statValues = document.querySelectorAll('.value');
+    statValues.forEach((value, index) => {
+        const finalValue = value.innerText;
+        const isSuffix = finalValue.includes('%');
+        const numericValue = parseInt(finalValue);
+
+        value.innerText = '0' + (isSuffix ? '%' : '');
+
+        gsap.to({
+            val: 0
+        }, {
+            val: numericValue,
+            duration: 2,
+            delay: index * 0.1,
+            ease: "power2.out",
+            onUpdate: function() {
+                value.innerText = Math.round(this.targets()[0].val) + (isSuffix ? '%' : '');
+            }
+        });
+    });
+
+    // Enhanced staggered animations for cards
+    tl.from('.stat-card', {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        stagger: {
+            amount: 0.4,
+            ease: "power2.out"
+        },
+        clearProps: "all"
+    })
+    .from('.resume-card, .create-new', {
+        y: 40,
+        opacity: 0,
+        duration: 0.8,
+        stagger: {
+            amount: 0.6,
+            ease: "power2.out"
+        },
+        clearProps: "all"
+    }, "-=0.4");
+
+    // Optimize hover animations
+    const cards = document.querySelectorAll('.resume-card, .create-new');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            gsap.to(card, {
+                y: -5,
+                duration: 0.3,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+        });
+
+        card.addEventListener('mouseleave', () => {
+            gsap.to(card, {
+                y: 0,
+                duration: 0.3,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+        });
+    });
+
+    // Improved button animations
+    const buttons = document.querySelectorAll('.button, .view-applications-button');
+    buttons.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+            gsap.to(button, {
+                scale: 1.05,
+                duration: 0.2,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+        });
+
+        button.addEventListener('mouseleave', () => {
+            gsap.to(button, {
+                scale: 1,
+                duration: 0.2,
+                ease: "power2.out",
+                overwrite: "auto"
+            });
+        });
+    });
+
+    // Enhanced notification button animation
+    const notificationBtn = document.querySelector('.notification-btn');
+    let notificationRotation = 0;
+    notificationBtn.addEventListener('click', () => {
+        notificationRotation += 360;
+        gsap.to(notificationBtn, {
+            rotation: notificationRotation,
+            duration: 0.6,
+            ease: "back.out(1.7)",
+            overwrite: "auto"
+        });
+    });
+
+    // Enhanced settings button animation
+    const settingsBtn = document.querySelector('.settings-btn');
+    let isSettingsOpen = false;
+    settingsBtn.addEventListener('click', () => {
+        isSettingsOpen = !isSettingsOpen;
+        gsap.to(settingsBtn, {
+            rotation: isSettingsOpen ? 90 : 0,
+            duration: 0.4,
+            ease: "power2.inOut",
+            overwrite: "auto"
+        });
+    });
+
+    // Add smooth scroll animation for mobile menu
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                gsap.to(window, {
+                    duration: 1,
+                    scrollTo: {
+                        y: target,
+                        offsetY: 80
+                    },
+                    ease: "power2.inOut"
+                });
+            }
+        });
+    });
+
+    // Add parallax effect to background
+    document.addEventListener('mousemove', (e) => {
+        const background = document.querySelector('.background');
+        const mouseX = e.clientX / window.innerWidth;
+        const mouseY = e.clientY / window.innerHeight;
+
+        gsap.to(background, {
+            duration: 1,
+            x: mouseX * 20,
+            y: mouseY * 20,
+            ease: "power2.out",
+            overwrite: "auto"
+        });
+    });
+
+    // Performance optimization for animations
+    gsap.ticker.lagSmoothing(1000, 16);
+    gsap.config({
+        autoSleep: 60,
+        force3D: true
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0,255,135,0.1), transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            z-index: 2;
+            position: relative;
+        }
+
+        .input-section {
+            margin-bottom: 2rem;
+        }
+
+        .input-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-section p {
+            color: #888;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .text-area:focus {
+            outline: none;
+            border-color: #00ff87;
+            background: rgba(0,255,135,0.05);
+        }
+
+        .generate-button {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .generate-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .resume-section {
+            display: none;
+            opacity: 0;
+        }
+
+        .resume-content {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 2rem;
+            color: #fff;
+        }
+
+        .resume-section h3 {
+            color: #00ff87;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .resume-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #60efff;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0,255,135,0.3);
+            border-radius: 50%;
+            border-top-color: #00ff87;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .success-message {
+            color: #00ff87;
+            text-align: center;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+
+    <div class="container">
+        <div class="card">
+            <div class="input-section">
+                <h2>AI Resume Generator</h2>
+                <p>Paste the job description below and we'll generate a tailored resume that matches the requirements.</p>
+
+                <textarea class="text-area" placeholder="Paste job description here..."></textarea>
+                <button class="generate-button">
+                    Generate Resume
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"></path>
+                        <path d="m12 5 7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Generating your resume...</p>
+        </div>
+
+        <div class="success-message">✨ Resume generated successfully!</div>
+
+        <div class="resume-section card">
+            <div class="resume-content">
+                <h3>Professional Resume</h3>
+
+                <div class="section-title">Professional Summary</div>
+                <p id="summary">Experienced professional with a proven track record...</p>
+
+                <div class="section-title">Skills</div>
+                <p id="skills">• Strategic Planning<br>• Project Management<br>• Team Leadership</p>
+
+                <div class="section-title">Experience</div>
+                <p id="experience">Senior Position<br>Company Name<br>• Achievement 1<br>• Achievement 2</p>
+
+                <div class="section-title">Education</div>
+                <p id="education">Bachelor's Degree<br>University Name</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const generateButton = document.querySelector('.generate-button');
+        const textarea = document.querySelector('.text-area');
+        const loadingSection = document.querySelector('.loading');
+        const resumeSection = document.querySelector('.resume-section');
+        const successMessage = document.querySelector('.success-message');
+
+        generateButton.addEventListener('click', function() {
+            if (textarea.value.trim() === '') {
+                alert('Please paste a job description first.');
+                return;
+            }
+
+            // Show loading state
+            loadingSection.style.display = 'block';
+            generateButton.style.opacity = '0.5';
+            generateButton.disabled = true;
+
+            // Simulate API call delay
+            setTimeout(() => {
+                // Hide loading state
+                loadingSection.style.display = 'none';
+                successMessage.style.display = 'block';
+
+                // Show resume section with animation
+                resumeSection.style.display = 'block';
+                gsap.to(resumeSection, {
+                    opacity: 1,
+                    duration: 1,
+                    ease: 'power3.out'
+                });
+
+                // Reset button state
+                generateButton.style.opacity = '1';
+                generateButton.disabled = false;
+
+                // Scroll to resume section
+                resumeSection.scrollIntoView({ behavior: 'smooth' });
+
+            }, 2000);
+        });
+
+        // Initial animations
+        gsap.from('.card', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            ease: 'power3.out'
+        });
+    </script>
+</body>
+</html>

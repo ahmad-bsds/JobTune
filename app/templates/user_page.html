@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0,255,135,0.1), transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem;
+            background: rgba(10,10,10,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-top: 80px;
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            height: 100vh;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cta {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .primary {
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #000;
+        }
+
+        .secondary {
+            border: 1px solid #fff;
+            color: #fff;
+        }
+
+        .resume-preview {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 1.5rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .resume-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 1.2rem;
+            transform: translateX(-100%);
+            opacity: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resume-section h3 {
+            color: #00ff87;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .resume-section p {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            color: #00ff87;
+        }
+
+        .highlight {
+            position: absolute;
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(90deg,
+                rgba(0,255,135,0) 0%,
+                rgba(0,255,135,0.1) 50%,
+                rgba(0,255,135,0) 100%);
+            transform: translateY(-50%) skewY(-5deg);
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding-top: 100px;
+                height: auto;
+            }
+
+            .hero {
+                text-align: center;
+            }
+
+            .cta {
+                justify-content: center;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .resume-preview {
+                height: 60vh;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <nav>
+        <div class="logo">JobEase</div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="#about">About</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Take the next step with a custom resume and tips.</h1>
+            <p>Transform your career with our AI-powered resume and interview guide. Get tailored resumes that perfectly match your target job descriptions, along with personalized interview tips to help you stand out to recruiters and land your dream job.</p>
+            <div class="cta">
+                <a href="/start" class="button primary">Get Started Free</a>
+                <a href="#" class="button secondary">View Examples</a>
+            </div>
+        </div>
+
+        <div class="resume-preview">
+            <div class="highlight"></div>
+            <div class="resume-section">
+                <h3>Smart Job Description Analysis</h3>
+                <p>Let AI analyze job descriptions and optimize your resume</p>
+                <ul class="feature-list">
+                    <li>Keyword optimization for ATS</li>
+                    <li>Skills gap analysis</li>
+                    <li>Industry-specific recommendations</li>
+                </ul>
+            </div>
+            <div class="resume-section">
+                <h3>AI-Powered Rewriting</h3>
+                <p>Professional content tailored to your target role</p>
+                <ul class="feature-list">
+                    <li>Impact-driven bullet points</li>
+                    <li>Achievement quantification</li>
+                    <li>Industry-specific language</li>
+                </ul>
+            </div>
+            <div class="resume-section">
+                <h3>Free Resume Features</h3>
+                <p>Start building your perfect resume today</p>
+                <ul class="feature-list">
+                    <li>Unlimited resume rewrites</li>
+                    <li>Multiple ATS-friendly templates</li>
+                    <li>Export to PDF/Word formats</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animate resume sections on load
+        gsap.to('.resume-section', {
+            x: 0,
+            opacity: 1,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power3.out'
+        });
+
+        // Animate highlight
+        gsap.to('.highlight', {
+            opacity: 1,
+            duration: 1,
+            delay: 1
+        });
+
+        // Create infinite highlight animation
+        gsap.to('.highlight', {
+            y: '130%',
+            duration: 2,
+            repeat: -1,
+            ease: 'none',
+            delay: 1
+        });
+
+        // Hover effects for resume sections
+        document.querySelectorAll('.resume-section').forEach(section => {
+            section.addEventListener('mouseenter', () => {
+                gsap.to(section, {
+                    backgroundColor: 'rgba(0,255,135,0.1)',
+                    x: 10,
+                    duration: 0.3
+                });
+            });
+
+            section.addEventListener('mouseleave', () => {
+                gsap.to(section, {
+                    backgroundColor: 'rgba(255,255,255,0.05)',
+                    x: 0,
+                    duration: 0.3
+                });
+            });
+        });
+    </script>
+</body>
+</html>
